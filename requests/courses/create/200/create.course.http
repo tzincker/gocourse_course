@@ -1,0 +1,8 @@
+# Request courses
+POST http://{{host}}:{{port}}/courses
+
+{
+    "name" : "Go Bases",
+    "start_date" : "2022-10-01",
+    "end_date" : "2023-01-01"
+}

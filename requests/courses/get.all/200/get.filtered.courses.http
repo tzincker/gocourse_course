@@ -1,0 +1,7 @@
+# Request courses
+
+###
+# @prompt name course name
+
+
+GET http://{{host}}:{{port}}/courses?name={{name}}

@@ -1,0 +1,5 @@
+# Request courses
+
+# @prompt id course id
+
+DELETE http://{{host}}:{{port}}/courses/{{id}}
