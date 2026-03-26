@@ -46,6 +46,10 @@ func (s service) Create(ctx context.Context, name, startDate, endDate string) (*
 		return nil, err
 	}
 
+	if endDateParsed.UnixMilli() > startDateParsed.UnixMilli() {
+		return nil, &ErrEndDateNotValid{StartDate: startDateParsed, EndDate: endDateParsed}
+	}
+
 	course := domain.Course{
 		Name:      name,
 		StartDate: startDateParsed,
@@ -111,23 +115,38 @@ func (s service) Update(
 	var startDateParsed *time.Time
 	var endDateParsed *time.Time
 
-	if startDate != nil {
+	course, err := s.Get(ctx, id)
+	if err != nil {
+		s.log.Println(err)
+		return err
+	}
 
+	if startDate != nil && *startDate != "" {
 		parsedDate, err := time.Parse("2006-01-02", *startDate)
 		if err != nil {
 			s.log.Panicln(err)
 			return err
 		}
 		startDateParsed = &parsedDate
+	} else {
+		startDateParsed = &course.StartDate
 	}
 
-	if endDate != nil {
+	if endDate != nil && *endDate != "" {
 		parsedDate, err := time.Parse("2006-01-02", *endDate)
 		if err != nil {
 			s.log.Panicln(err)
 			return err
 		}
 		endDateParsed = &parsedDate
+	} else {
+		endDateParsed = &course.EndDate
+	}
+
+	if startDateParsed.After(*endDateParsed) {
+		start := &startDateParsed
+		end := &endDateParsed
+		return &ErrEndDateNotValid{StartDate: **start, EndDate: **end}
 	}
 
 	err = s.repo.Update(ctx, id, name, startDateParsed, endDateParsed)
