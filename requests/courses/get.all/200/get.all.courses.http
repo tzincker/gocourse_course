@@ -1,2 +1,3 @@
 # Request courses
 GET http://{{host}}:{{port}}/courses
+Authorization: 0928dfa4-2a03-11f1-ae1f-08979874dd67
